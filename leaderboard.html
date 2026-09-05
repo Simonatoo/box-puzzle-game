@@ -1,0 +1,132 @@
+---
+# this is an empty front matter, so Jekyll doesn't wrap this page in the site theme
+---
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Ranking - Box Puzzle Game</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+            font-family: monospace;
+            font-size: 14pt;
+            margin: 0;
+            padding: 12px;
+        }
+
+        h1 {
+            font-size: 1.1em;
+            margin: 0 0 12px 0;
+            text-align: center;
+        }
+
+        ol {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            border-bottom: 1px solid #333;
+        }
+
+        li .rank {
+            color: #8f8;
+            width: 2em;
+        }
+
+        li .name {
+            flex: 1;
+        }
+
+        li .score {
+            font-weight: bold;
+        }
+
+        #status {
+            text-align: center;
+            color: #999;
+        }
+
+        #refresh {
+            display: block;
+            margin: 12px auto 0 auto;
+            background: #222;
+            color: white;
+            border: 1px solid #555;
+            font-family: monospace;
+            font-size: 0.9em;
+            padding: 4px 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🏆 Ranking</h1>
+    <div id="status">Carregando...</div>
+    <ol id="list"></ol>
+    <button id="refresh">Atualizar</button>
+
+    <script>
+        const SERVER_URL = "wss://box-puzzle-game.onrender.com"
+        const statusEl = document.getElementById("status")
+        const listEl = document.getElementById("list")
+
+        function loadLeaderboard() {
+            statusEl.style.display = "block"
+            statusEl.textContent = "Carregando..."
+            listEl.innerHTML = ""
+
+            const ws = new WebSocket(SERVER_URL)
+
+            ws.onopen = () => {
+                ws.send(JSON.stringify({ action: "getLeaderboard" }))
+            }
+
+            ws.onmessage = (evt) => {
+                const msg = JSON.parse(evt.data)
+                if (msg.action === "leaderboard") {
+                    renderLeaderboard(msg.data)
+                }
+                ws.close()
+            }
+
+            ws.onerror = () => {
+                statusEl.textContent = "Erro ao carregar o ranking. Tente novamente."
+            }
+        }
+
+        function renderLeaderboard(entries) {
+            statusEl.style.display = "none"
+            listEl.innerHTML = ""
+            if (!entries || entries.length === 0) {
+                statusEl.style.display = "block"
+                statusEl.textContent = "Ninguem no ranking ainda."
+                return
+            }
+            entries.forEach((entry, i) => {
+                const li = document.createElement("li")
+                li.innerHTML = `<span class="rank">${i + 1}.</span><span class="name">${escapeHtml(entry.name)}</span><span class="score">${entry.score}</span>`
+                listEl.appendChild(li)
+            })
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement("div")
+            div.textContent = text
+            return div.innerHTML
+        }
+
+        document.getElementById("refresh").addEventListener("click", loadLeaderboard)
+        loadLeaderboard()
+    </script>
+</body>
+
+</html>
