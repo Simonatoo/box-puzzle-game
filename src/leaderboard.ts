@@ -18,10 +18,24 @@ const whenOpen = (ws: WebSocket, action: () => void): void => {
     }
 }
 
-const sendScore = (name: string, score: number): void => {
+const MAX_RETRIES = 3
+const RETRY_DELAY_MS = 5000
+
+const withRetry = (action: () => void, retriesLeft: number = MAX_RETRIES): void => {
     const ws = getSocket()
-    whenOpen(ws, () => {
-        ws.send(JSON.stringify({ action: "saveScore", name: name, score: score }))
+    ws.onerror = () => {
+        if (retriesLeft > 0) {
+            pause(RETRY_DELAY_MS)
+            socket = undefined
+            withRetry(action, retriesLeft - 1)
+        }
+    }
+    whenOpen(ws, action)
+}
+
+const sendScore = (name: string, score: number): void => {
+    withRetry(() => {
+        socket.send(JSON.stringify({ action: "saveScore", name: name, score: score }))
     })
 }
 
@@ -42,14 +56,13 @@ const renderLeaderboard = (entries: { name: string, score: number }[]): void => 
 }
 
 const showLeaderboard = (): void => {
-    const ws = getSocket()
-    ws.onmessage = (evt: MessageEvent) => {
+    getSocket().onmessage = (evt: MessageEvent) => {
         const msg = JSON.parse(evt.data as string)
         if (msg.action === "leaderboard") {
             renderLeaderboard(msg.data)
         }
     }
-    whenOpen(ws, () => {
-        ws.send(JSON.stringify({ action: "getLeaderboard" }))
+    withRetry(() => {
+        socket.send(JSON.stringify({ action: "getLeaderboard" }))
     })
 }

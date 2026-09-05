@@ -99,17 +99,18 @@ function makeCodeRun(options) {
         } else if (d.type === "messagepacket" && d.channel) {
             const handler = channelHandlers[d.channel]
             if (handler) {
+                const buf = d.data;
+                let data;
                 try {
-                    const buf = d.data;
                     const str = uint8ArrayToString(buf);
-                    const data = JSON.parse(str)
-                    handler(data);
+                    data = JSON.parse(str)
                 } catch (e) {
-                    console.log(`invalid simmessage`)
-                    console.log(e)
+                    // not a JSON-encoded payload (e.g. the "wss" binary protocol) - pass raw bytes through
+                    data = buf;
                 }
+                handler(data);
             }
-        }            
+        }
     }, false);
 
     // helpers

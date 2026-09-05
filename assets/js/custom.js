@@ -18,6 +18,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let sockets = {};
 
+    function uint8ArrayToString(input) {
+        let res = ""
+        for (let i = 0; i < input.length; ++i)
+            res += String.fromCharCode(input[i]);
+        return res;
+    }
+
+    function simPostMessage(msg) {
+        const frame = document.getElementById("simframe");
+        if (frame && frame.contentWindow)
+            frame.contentWindow.postMessage(msg, "*");
+    }
+
     const proxy = data => {
         simPostMessage({
             type: 'messagepacket',
