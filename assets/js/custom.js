@@ -27,8 +27,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function simPostMessage(msg) {
         const frame = document.getElementById("simframe");
-        if (frame && frame.contentWindow)
+        if (frame && frame.contentWindow) {
             frame.contentWindow.postMessage(msg, "*");
+        } else {
+            console.log("[wss] simframe not found, could not deliver message", msg)
+        }
     }
 
     const proxy = data => {
@@ -40,22 +43,26 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function openSocket(id, url) {
+        console.log(`[wss] opening socket ${id} -> ${url}`)
         if (sockets[id]) {
             sockets[id].close();
             delete sockets[id];
         }
         const ws = sockets[id] = new WebSocket(url);
         ws.onerror = (e) => {
+            console.log(`[wss] socket ${id} error`, e)
             if (sockets[id] !== ws) return;
             const data = new Uint8Array([ERROR_MESSAGE, id])
             proxy(data)
         }
         ws.onopen = () => {
+            console.log(`[wss] socket ${id} open`)
             if (sockets[id] !== ws) return;
             const data = new Uint8Array([OPEN_MESSAGE, id]);
             proxy(data)
         }
         ws.onclose = (e) => {
+            console.log(`[wss] socket ${id} closed`, e.code)
             if (sockets[id] !== ws) return;
             const code = e.code;
             const data = new Uint8Array([CLOSE_MESSAGE, id, (code >> 24) & 0xff, (code >> 16) & 0xff, (code >> 8) & 0xff, code & 0xff]);
@@ -87,6 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     addSimMessageHandler("wss", (msg) => {
+        console.log("[wss] received sim message", msg)
         const type = msg[0]
         const id = msg[1];
 
@@ -96,11 +104,13 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if ((type & MESSAGE_MESSAGE) == MESSAGE_MESSAGE) {
             const socket = sockets[id];
             if (!socket) {
+                console.log(`[wss] no socket for id ${id}, dropping message`)
                 return;
             }
             let data = msg.slice(2);
             if ((type & STRING_DATA) === STRING_DATA)
                 data = uint8ArrayToString(data);
+            console.log(`[wss] sending to socket ${id}:`, data)
             socket.send(data);
         }
     })
