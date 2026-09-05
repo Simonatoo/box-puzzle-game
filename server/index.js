@@ -47,7 +47,7 @@ async function handleMessage(socket, raw) {
     } else if (msg.action === "getLeaderboard") {
         const data = await scoresCollection
             .find({})
-            .sort({ score: -1 })
+            .sort({ score: 1 })
             .limit(LEADERBOARD_LIMIT)
             .project({ _id: 0, name: 1, score: 1 })
             .toArray()
