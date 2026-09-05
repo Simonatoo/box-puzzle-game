@@ -5,8 +5,7 @@
     "dependencies": {
         "device": "*",
         "animation": "*",
-        "arcade-text": "github:microsoft/arcade-text#v1.3.0",
-        "pxt-sockets": "github:pelikhan/pxt-sockets"
+        "arcade-text": "github:microsoft/arcade-text#v1.3.0"
     },
     "files": [
         "README.md",
