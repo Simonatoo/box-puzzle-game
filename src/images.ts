@@ -1,5 +1,3 @@
-// images.ts
-
 namespace SpriteKind {
     export const Ground = SpriteKind.create();
     export const Wall = SpriteKind.create();
