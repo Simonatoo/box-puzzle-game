@@ -1,0 +1,34 @@
+{
+    "name": "box puzzle game",
+    "description": "",
+    "dependencies": {
+        "device": "*",
+        "animation": "*",
+        "arcade-text": "github:microsoft/arcade-text#v1.3.0"
+    },
+    "files": [
+        "main.ts",
+        "README.md",
+        "assets.json",
+        "images.ts",
+        "mapGenerator.ts",
+        "leveis.ts",
+        "images.g.jres",
+        "images.g.ts",
+        "menu.ts",
+        "tilemap.g.jres",
+        "tilemap.g.ts"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "targetVersions": {
+        "target": "4.1.17",
+        "targetId": "arcade"
+    },
+    "supportedTargets": [
+        "arcade"
+    ],
+    "preferredEditor": "tsprj",
+    "languageRestriction": "javascript-only"
+}
