@@ -2,9 +2,20 @@ const SERVER_URL = "wss://box-puzzle-game.onrender.com"
 
 let socket: WebSocket
 let leaderboardSprites: TextSprite[] = []
+let debugSprite: TextSprite
+
+const debugStatus = (text: string): void => {
+    if (!debugSprite) {
+        debugSprite = textsprite.create(text)
+        debugSprite.setPosition(screen.width / 2, screen.height - 8)
+    } else {
+        debugSprite.setText(text)
+    }
+}
 
 const getSocket = (): WebSocket => {
     if (!socket || socket.readyState === WebSocket.CLOSED) {
+        debugStatus("conectando...")
         socket = new WebSocket(SERVER_URL)
     }
     return socket
@@ -24,13 +35,18 @@ const RETRY_DELAY_MS = 5000
 const withRetry = (action: () => void, retriesLeft: number = MAX_RETRIES): void => {
     const ws = getSocket()
     ws.onerror = () => {
+        debugStatus("erro na conexao")
         if (retriesLeft > 0) {
             pause(RETRY_DELAY_MS)
             socket = undefined
             withRetry(action, retriesLeft - 1)
         }
     }
-    whenOpen(ws, action)
+    whenOpen(ws, () => {
+        debugStatus("conectado, enviando...")
+        action()
+        debugStatus("enviado!")
+    })
 }
 
 const sendScore = (name: string, score: number): void => {
