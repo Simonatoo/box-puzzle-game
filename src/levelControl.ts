@@ -31,7 +31,9 @@ const onLevelWin = (): void => {
         startLevel(levelIndex)
     } else {
         const playerName = game.askForString("Digite seu nome:")
+        sendScore(playerName, score)
         game.splash("Parabens, " + playerName + "!", score)
+        showLeaderboard()
     }
 }
 

@@ -4,7 +4,8 @@
     "dependencies": {
         "device": "*",
         "animation": "*",
-        "arcade-text": "github:microsoft/arcade-text#v1.3.0"
+        "arcade-text": "github:microsoft/arcade-text#v1.3.0",
+        "pxt-sockets": "github:pelikhan/pxt-sockets"
     },
     "files": [
         "README.md",
@@ -17,11 +18,13 @@
         "src/images.ts",
         "src/mapGenerator.ts",
         "src/leveis.ts",
+        "src/leaderboard.ts",
         "src/levelControl.ts",
         "src/playerMovement.ts",
         "src/menu.ts",
         "main.ts"
     ],
+    "disableTargetTemplateFiles": true,
     "testFiles": [
         "test.ts"
     ],
