@@ -1,0 +1,16 @@
+{
+    "name": "box-puzzle-game-server",
+    "version": "1.0.0",
+    "private": true,
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "mongodb": "^6.9.0",
+        "ws": "^8.18.0"
+    },
+    "devDependencies": {
+        "dotenv": "^16.4.5"
+    }
+}

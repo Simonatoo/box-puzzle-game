@@ -1,12 +1,14 @@
 let levelIndex = 0
 let gameStarted = false
 let levelComplete = false
+let score = 0
 //let onLevelWin: () => void = () => { }
 
 const startLevel = (index: number): void => {
     clearLevel()
     generateMap(LEVELS[index])
     spawnPlayer()
+    info.showScore(true)
 }
 
 const clearLevel = (): void => {
@@ -28,7 +30,8 @@ const onLevelWin = (): void => {
         levelIndex += 1
         startLevel(levelIndex)
     } else {
-        game.splash("Parabens!", "Voce completou todas as fases!")
+        const playerName = game.askForString("Digite seu nome:")
+        game.splash("Parabens, " + playerName + "!", score)
     }
 }
 
@@ -43,3 +46,10 @@ const checkLevelComplete = (): boolean => {
     }
     return true
 }
+
+game.onUpdateInterval(1000, () => {
+    if (!gameStarted) return
+
+    score++
+    info.setScore(score)
+})
