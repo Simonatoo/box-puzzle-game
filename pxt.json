@@ -24,7 +24,6 @@
         "src/menu.ts",
         "main.ts"
     ],
-    "disableTargetTemplateFiles": true,
     "testFiles": [
         "test.ts"
     ],
@@ -36,5 +35,6 @@
         "arcade"
     ],
     "preferredEditor": "tsprj",
-    "languageRestriction": "javascript-only"
+    "languageRestriction": "javascript-only",
+    "disableTargetTemplateFiles": true
 }
