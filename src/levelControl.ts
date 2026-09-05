@@ -33,6 +33,7 @@ const onLevelWin = (): void => {
         const playerName = game.askForString("Digite seu nome:")
         sendScore(playerName, score)
         game.splash("Parabens, " + playerName + "!", score)
+        game.gameOver(true)
     }
 }
 
