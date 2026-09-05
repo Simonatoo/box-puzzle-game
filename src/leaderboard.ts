@@ -29,10 +29,9 @@ const whenOpen = (ws: WebSocket, action: () => void): void => {
     }
 }
 
-const MAX_RETRIES = 3
 const RETRY_DELAY_MS = 5000
 
-const withRetry = (action: () => void, retriesLeft: number = MAX_RETRIES): void => {
+const withRetry = (action: () => void, retriesLeft: number = 3): void => {
     const ws = getSocket()
     ws.onerror = () => {
         debugStatus("erro na conexao")
